@@ -2,6 +2,11 @@
 
 O intuito deste repositório é mostrar o projeto desenvolvido para unidade curricular sistemas distribuídos.
 
+### Gestão & Manuntenção
+
+Para se gerir e proceder à sucessiva manuntenção do projecto foi utilizado o seguinte trello:
+https://trello.com/b/4JpSvTLh/trabalho-final-sdt-2021-2022.
+
 ### 💡 Utilização
 
 A utilização do conteudo deste repositorio é simplesmente para a realização do projeto proposto para a unidade curricular.
