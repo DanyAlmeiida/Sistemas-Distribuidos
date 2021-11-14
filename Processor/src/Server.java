@@ -6,9 +6,8 @@ import java.net.Socket;
 public class Server {
     public static void main (String args[]) {
         try{
-            int serverPort = 7896;
-            ServerSocket listenSocket = new ServerSocket(serverPort);
-
+            ServerSocket listenSocket = new ServerSocket(7896);
+            System.out.println("started");
             while(true) {
                 Socket clientSocket = listenSocket.accept(); // bloqueia à espera de uma conexão
                 Connection c = new Connection(clientSocket); // processa o pedido

@@ -16,7 +16,7 @@ public class Connection  extends Thread {
             clientSocket = aClientSocket;
             ois = new ObjectInputStream( clientSocket.getInputStream());
             out = new DataOutputStream( clientSocket.getOutputStream());
-
+            System.out.println("teste");
             this.start(); //executa o método run numa thread separada
 
         } catch(IOException e) {
@@ -25,6 +25,7 @@ public class Connection  extends Thread {
     }
 
     public ResultModel<Script> validate(Script script){
+        System.out.println("x");
         if(script == null)
             return new ResultModel<Script>("Object Not Defined");
 
@@ -58,7 +59,7 @@ public class Connection  extends Thread {
             case "write":
                 script.id = ScriptsStorage.scriptsList.size();
                 ScriptsStorage.add(script);
-                out.writeUTF(String.valueOf(script.id));
+                out.writeUTF(String.valueOf(script));
                 break;
             default:
                 throw new Exception("Script Request Type not defined");
@@ -70,6 +71,8 @@ public class Connection  extends Thread {
             ResultModel<Script> resScriptValidation = validate((Script) ois.readObject());
             if(!resScriptValidation.success)
                 out.writeUTF(resScriptValidation.errors);
+
+            System.out.println(resScriptValidation.errors);
 
             HandleRequestedScript(resScriptValidation.object);
 

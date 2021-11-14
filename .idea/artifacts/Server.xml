@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Server">
+    <output-path>$PROJECT_DIR$/out/artifacts/Server</output-path>
+    <root id="archive" name="Sistemas-Distribuidos.jar">
+      <element id="module-output" name="Client" />
+      <element id="module-output" name="Utils" />
+      <element id="module-output" name="Processor" />
+      <element id="module-output" name="Stabilizer" />
+      <element id="module-output" name="src" />
+      <element id="module-output" name="ObjectRegistry" />
+    </root>
+  </artifact>
+</component>

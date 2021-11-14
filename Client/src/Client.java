@@ -1,38 +1,38 @@
 import Models.Request;
 import Models.Script;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+
+import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client {
 
-    public static ScriptsInterface lookUpScriptsInterface() {
-        ScriptsInterface scriptsInterface = null;
-        try
-        {
-            scriptsInterface = (ScriptsInterface) Naming.lookup("rmi://localhost:2022/scriptsInterface");
-        }
-        catch (NotBoundException | RemoteException | MalformedURLException ex)
-        {
-            ex.printStackTrace();
-        }
-        return scriptsInterface;
-    }
-    public static void main(String[] args){
+    public static void main (String args[]) {
+        Socket SocketServer = null;
+        try{
+            SocketServer = new Socket("localhost", 7896);
+            ObjectInputStream in = new ObjectInputStream( SocketServer.getInputStream());
+            ObjectOutputStream  out = new ObjectOutputStream ( SocketServer.getOutputStream());
 
-        ScriptsInterface scriptsInterface = lookUpScriptsInterface();
+            out.writeObject(new Script(new Request("write","1")));
+            Script script = (Script) in.readObject();
+            System.out.println("Received: "+ script.request.Type);
 
-        try
-        {
-            Script script = new Script(new Request("A","1"));
-            scriptsInterface.RunScript(script);
-            scriptsInterface.getId();
+        }catch (UnknownHostException e){
+            System.out.println("Sock:"+e.getMessage());
+        }catch (EOFException e){
+            System.out.println("IO:" + e.getMessage());
+        }catch (IOException e){
+            System.out.println("IO:"+e.getMessage());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if(SocketServer!=null)
+                try {
+                    SocketServer.close();
+                }catch (IOException e){
+                    System.out.println("close:"+e.getMessage());}
         }
-        catch(RemoteException e)
-        {System.out.println(e.getMessage()); }
-        catch(Exception e)
-        {e.printStackTrace();}
     }
 
 
