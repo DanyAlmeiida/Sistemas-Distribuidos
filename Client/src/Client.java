@@ -27,6 +27,7 @@ public class Client {
         {
             Script script = new Script(new Request("A","1"));
             scriptsInterface.RunScript(script);
+            scriptsInterface.getId();
         }
         catch(RemoteException e)
         {System.out.println(e.getMessage()); }
