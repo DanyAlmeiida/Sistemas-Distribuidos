@@ -8,15 +8,16 @@ import java.rmi.RemoteException;
 public class Client {
 
     public static ScriptsInterface lookUpScriptsInterface() {
-
+        ScriptsInterface scriptsInterface = null;
         try
         {
-            return (ScriptsInterface) Naming.lookup("rmi://localhost:2022/scriptsInterface");
+            scriptsInterface = (ScriptsInterface) Naming.lookup("rmi://localhost:2022/scriptsInterface");
         }
         catch (NotBoundException | RemoteException | MalformedURLException ex)
         {
             ex.printStackTrace();
         }
+        return scriptsInterface;
     }
     public static void main(String[] args){
 

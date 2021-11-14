@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="71a897bd-ae23-474a-87f2-ce3eb2b38195" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Client/src/Client.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ObjectRegistry/ObjectRegistry.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ObjectRegistry/src/ObjectRegistry.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ObjectRegistry/src/ObjectRegistryInterface.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/Utils.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/src/Interfaces/Utils.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/src/Models/Request.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/src/Models/ResultModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/src/Models/Script.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/src/ScriptsInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Client.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/Client/src/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utils/src/Models/Script.java" beforeDir="false" afterPath="$PROJECT_DIR$/Utils/src/Models/Script.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
