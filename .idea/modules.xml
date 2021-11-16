@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Client/Client.iml" filepath="$PROJECT_DIR$/Client/Client.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ObjectRegistry/ObjectRegistry.iml" filepath="$PROJECT_DIR$/ObjectRegistry/ObjectRegistry.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Processor/Processor.iml" filepath="$PROJECT_DIR$/Processor/Processor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/Sistemas-Distribuidos.iml" filepath="$PROJECT_DIR$/.idea/Sistemas-Distribuidos.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Stabilizer/Stabilizer.iml" filepath="$PROJECT_DIR$/Stabilizer/Stabilizer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Utils/Utils.iml" filepath="$PROJECT_DIR$/Utils/Utils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Client/src.iml" filepath="$PROJECT_DIR$/Client/src.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SD-TRABALHO.iml" filepath="$PROJECT_DIR$/SD-TRABALHO.iml" />
     </modules>
   </component>
 </project>
