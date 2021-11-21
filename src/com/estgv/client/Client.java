@@ -1,59 +1,36 @@
 package com.estgv.client;
 
-import com.estgv.models.Request;
-import com.estgv.models.ResultModel;
+
+import com.estgv.interfaces.ObjectRegistryInterface;
+import com.estgv.interfaces.ScriptsInterface;
 import com.estgv.models.Script;
 
-import java.io.*;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 public class Client {
 
-    public final static String SERVER_HOSTNAME = "localhost";
-    public final static int COMM_PORT = 5050;  // socket port for client comms
-
-    private Socket socket;
-    private ResultModel<Script> payload;
-
-    /** Default constructor. */
     public Client()
     {
-        try
-        {
-            this.socket = new Socket(SERVER_HOSTNAME, COMM_PORT);
-            InputStream iStream = this.socket.getInputStream();
-            OutputStream oStream = this.socket.getOutputStream();
+        ScriptsInterface scriptsInterface = null;
+        ObjectRegistryInterface objectRegistryInterface = null;
+        try{
+            try {
+                scriptsInterface = (ScriptsInterface) Naming.lookup("rmi://localhost:2022/scripts");
+                objectRegistryInterface = (ObjectRegistryInterface) Naming.lookup("rmi://localhost:2023/registry");
+            } catch (NotBoundException | RemoteException | MalformedURLException ex)
+            {ex.printStackTrace(); }
 
-            ObjectOutputStream oos = new ObjectOutputStream(oStream);
-            oos.writeObject(new Script(0,new Request("A")));
-
-            ObjectInputStream oiStream = new ObjectInputStream(iStream);
-            this.payload = (ResultModel<Script>) oiStream.readObject();
-
-
-
+            Script script = new Script("cls");
+            Integer id = scriptsInterface.run(script);
+            System.out.println(id.toString());
         }
-        catch (UnknownHostException uhe)
-        {
-            System.out.println("Don't know about host: " + SERVER_HOSTNAME);
-            System.exit(1);
-        }
-        catch (IOException ioe)
-        {
-            System.out.println("Couldn't get I/O for the connection to: " +
-                    SERVER_HOSTNAME + ":" + COMM_PORT);
-            System.exit(1);
-        }
-        catch(ClassNotFoundException cne)
-        {
-            System.out.println("Wanted class TcpPayload, but got class " + cne);
-        }
-        if(this.payload.success == true)
-            System.out.println(this.payload.object.PrintInfo());
-        else
-            System.out.println(this.payload.errors);
+        catch(Exception e)
+        {System.out.println(e.getMessage()); }
     }
+
 
     /**
      * Run this class as an application.
