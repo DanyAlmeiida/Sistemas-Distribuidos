@@ -1,4 +1,4 @@
-package com.estgv.server;
+package com.estgv.processor;
 
 import com.estgv.managers.ScriptsManager;
 import com.estgv.registry.ObjectRegistry;
@@ -7,11 +7,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class Server {
+public class Processor {
     public static Registry r = null;
     public static ScriptsManager scriptsManager;
 
-    public Server()
+    public Processor()
     {
         try{
             r= LocateRegistry.createRegistry(2022);
@@ -42,6 +42,6 @@ public class Server {
      */
     public static void main(String[] args)
     {
-        Server server = new Server();
+        Processor server = new Processor();
     }
 }
