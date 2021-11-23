@@ -24,8 +24,8 @@ public class Client {
             {ex.printStackTrace(); }
 
             Script script = new Script("cls");
-            Integer id = scriptsInterface.run(script);
-            System.out.println(id.toString());
+            String id = scriptsInterface.run(script);
+            System.out.println(id);
         }
         catch(Exception e)
         {System.out.println(e.getMessage()); }

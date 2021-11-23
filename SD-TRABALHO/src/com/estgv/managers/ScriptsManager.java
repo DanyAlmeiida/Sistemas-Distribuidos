@@ -8,12 +8,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ScriptsManager extends UnicastRemoteObject implements ScriptsInterface
 {
@@ -31,12 +30,12 @@ public class ScriptsManager extends UnicastRemoteObject implements ScriptsInterf
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(script);
 
-            chargerInterface.upload("RequestScript_N" + script.id + ".txt",bos.toByteArray());
+            chargerInterface.upload("RequestScript_N" + script.uuid + ".txt",bos.toByteArray());
         }catch (Exception e) { e.printStackTrace(); }
 
     }
 
-    private Script Read(Integer scriptId) throws RemoteException {
+    private Script Read(String scriptId) throws RemoteException {
         Script rscript = null;
 
         try{
@@ -54,14 +53,14 @@ public class ScriptsManager extends UnicastRemoteObject implements ScriptsInterf
     }
 
     @Override
-    public Integer run(Script script) throws RemoteException {
-        Script _newS = script.setId(scriptArrayList.size());
+    public String run(Script script) throws RemoteException {
+        Script _newS = script.setUuid(UUID.randomUUID().toString());
         this.scriptArrayList.add(_newS);
 
         Charge(script);
-        Script chargerInfo = Read(script.id);
+        Script chargerInfo = Read(script.uuid);
 
-        return chargerInfo.id;
+        return chargerInfo.uuid;
     }
 
     @Override
