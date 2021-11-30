@@ -7,6 +7,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+
+//Classe do Processador 
 public class Processor {
     public static Registry r = null;
     public static ScriptsManager scriptsManager;
