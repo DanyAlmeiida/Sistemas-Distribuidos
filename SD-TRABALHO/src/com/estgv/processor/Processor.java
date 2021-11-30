@@ -1,37 +1,24 @@
 package com.estgv.processor;
 
 import com.estgv.interfaces.ObjectRegistryInterface;
+import com.estgv.interfaces.ProcessorReplicaManagerInterface;
 import com.estgv.managers.ScriptsManager;
-import com.estgv.models.ProcessorInfo;
-import com.estgv.registry.ObjectRegistry;
-
-import java.lang.management.ManagementFactory;
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.UUID;
 
+import com.estgv.models.ProcessorInfo;
 import com.estgv.threads.ResourcesThread;
-import com.sun.management.OperatingSystemMXBean;
+import com.estgv.threads.ScriptRequestsThreads;
 
 public class Processor {
     public static Registry r = null;
     public static Integer port;
     public static ScriptsManager scriptsManager;
 
-    public Processor(Integer port)
+    public Processor(String uuid, Integer port)
     {
-
-        try {
-            r = LocateRegistry.createRegistry(2023);
-            r.rebind("registry", new ObjectRegistry());
-        } catch (RemoteException remoteException) {
-            remoteException.printStackTrace();
-        }
-
         try{
             r= LocateRegistry.createRegistry(port);
         }catch (RemoteException e){
@@ -39,29 +26,31 @@ public class Processor {
         }
 
         try{
-            String pid = UUID.randomUUID().toString();
-            String rebind = "scripts";
-            ObjectRegistryInterface objectRegistryInterface = (ObjectRegistryInterface) Naming.lookup("rmi://localhost:2023/registry");
-            objectRegistryInterface.add(pid,new ProcessorInfo("rmi://localhost:"+port+"/" + rebind,0.0));
+            String address = "rmi://localhost:" + port + "/scripts";
+            ObjectRegistryInterface objectRegistryInterface = (ObjectRegistryInterface)Naming.lookup("rmi://localhost:2023/registry");
+            objectRegistryInterface.add(uuid,address);
+
+            ProcessorReplicaManagerInterface processorReplicaManagerInterface = (ProcessorReplicaManagerInterface)Naming.lookup("rmi://localhost:2024/processor_manager");
+            processorReplicaManagerInterface.add(new ProcessorInfo(
+                    uuid,
+                    address ,
+                    0.0
+            ));
 
             scriptsManager = new ScriptsManager();
             r.rebind("scripts", scriptsManager );
             System.out.println("server ready");
 
 
-            ResourcesThread  resourcesThread = new ResourcesThread(pid);
+            ResourcesThread  resourcesThread = new ResourcesThread(uuid);
             resourcesThread.start();
 
-
+            ScriptRequestsThreads scriptRequestsThreads = new ScriptRequestsThreads();
+            scriptRequestsThreads.serverAddress = address;
+            scriptRequestsThreads.start();
         }catch(Exception e) {
             System.out.println("server main " + e.getMessage());
         }
-
-
-
-
-
-
     }
 
     /**
@@ -69,6 +58,6 @@ public class Processor {
      */
     public static void main(String[] args)
     {
-        Processor server = new Processor(2022);
+        Processor server = new Processor(args[0],Integer.parseInt(args[1]));
     }
 }

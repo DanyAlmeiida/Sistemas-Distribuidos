@@ -1,10 +1,10 @@
 package com.estgv.client;
 
 
-import com.estgv.interfaces.ObjectRegistryInterface;
+import com.estgv.interfaces.ProcessorReplicaManagerInterface;
 import com.estgv.interfaces.ScriptsInterface;
+import com.estgv.models.ProcessorInfo;
 import com.estgv.models.Script;
-import org.apache.commons.net.ftp.FTPClient;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.net.MalformedURLException;
@@ -44,12 +44,12 @@ public class Client {
     }
     private void ExecuteScript(){
         ScriptsInterface scriptsInterface = null;
-        ObjectRegistryInterface objectRegistryInterface = null;
+        ProcessorReplicaManagerInterface processorReplicaManagerInterface = null;
         try{
             try {
-                objectRegistryInterface = (ObjectRegistryInterface) Naming.lookup("rmi://localhost:2023/registry");
-                String s =  objectRegistryInterface.resolve();
-                scriptsInterface = (ScriptsInterface) Naming.lookup(s);
+                processorReplicaManagerInterface = (ProcessorReplicaManagerInterface) Naming.lookup("rmi://localhost:2024/processor_manager");
+                ProcessorInfo processorInfo = processorReplicaManagerInterface.get();
+                scriptsInterface = (ScriptsInterface) Naming.lookup(processorInfo.serverAddress);
             } catch (NotBoundException | RemoteException | MalformedURLException ex)
             {ex.printStackTrace(); }
 

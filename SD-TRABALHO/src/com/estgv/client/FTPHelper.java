@@ -22,10 +22,13 @@ public class FTPHelper {
         }
 
     }
+    public void execute_command(String command){
+        //ftp.sendCommand("");
+    }
     public boolean uploadFile(Path filePath)
             throws Exception {
         boolean res = false;
-        try(InputStream input = new FileInputStream(new File(filePath.toFile().getAbsolutePath()))){
+        try(InputStream input = new FileInputStream(filePath.toFile().getAbsolutePath())){
             ftp.changeWorkingDirectory("tpsd");
             res = this.ftp.storeFile(String.valueOf(filePath.getFileName()), input);
             int reply = ftp.getReplyCode();

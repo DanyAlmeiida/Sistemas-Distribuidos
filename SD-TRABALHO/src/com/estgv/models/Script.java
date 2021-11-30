@@ -7,6 +7,7 @@ public class Script implements Serializable {
     private static final long serialVersionUID = 1L;
     public String uuid;
     public String script; //ex: put text1.txt
+    public String target_server;
     public byte[] file;
     public String result;
 

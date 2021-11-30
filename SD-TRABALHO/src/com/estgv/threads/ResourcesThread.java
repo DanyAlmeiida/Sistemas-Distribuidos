@@ -1,7 +1,6 @@
 package com.estgv.threads;
 
-import com.estgv.interfaces.ObjectRegistryInterface;
-import com.estgv.interfaces.ScriptsInterface;
+import com.estgv.interfaces.ProcessorReplicaManagerInterface;
 import com.sun.management.OperatingSystemMXBean;
 
 import java.lang.management.ManagementFactory;
@@ -27,10 +26,10 @@ public class ResourcesThread extends Thread{
         {
             double x = osBean.getSystemCpuLoad();
             cpu_mean_usage += x;
-            System.out.println(it + " = " + df.format(x));
+        //    System.out.println(it + " = " + df.format(x));
 
             try {
-                sleep(500);
+                sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -52,12 +51,15 @@ public class ResourcesThread extends Thread{
             {
                 it++;
             }
+
         }
     }
 
     public void setCpu_mean_usage(double cpu_mean_usage) throws MalformedURLException, NotBoundException, RemoteException {
-        ObjectRegistryInterface objectRegistryInterface = (ObjectRegistryInterface) Naming.lookup("rmi://localhost:2023/registry");
-        objectRegistryInterface.set_cpu_usage(processorId,cpu_mean_usage);
-        System.out.println("\nCPU USAGE:" + df.format(cpu_mean_usage));
+        ProcessorReplicaManagerInterface processorReplicaManagerInterface = (ProcessorReplicaManagerInterface) Naming.lookup("rmi://localhost:2024/processor_manager");
+        processorReplicaManagerInterface.set_cpu_usage(processorId,cpu_mean_usage);
+
+
+        System.out.println("\nPROCESSOR [ " + processorId + " ] CPU USAGE:" + df.format(cpu_mean_usage));
     }
 }
