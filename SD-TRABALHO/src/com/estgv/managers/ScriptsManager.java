@@ -16,6 +16,7 @@ import java.util.UUID;
 
 public class ScriptsManager extends UnicastRemoteObject implements ScriptsInterface
 {
+    public double cpu_usage = 0.0;
     private static final long serialVersionUID = 1L;
     private ArrayList<Script> scriptArrayList = new ArrayList<Script>();
 
@@ -23,44 +24,32 @@ public class ScriptsManager extends UnicastRemoteObject implements ScriptsInterf
     }
 
     private void Charge(Script script) throws  RemoteException {
-        try{
-            ChargerInterface chargerInterface = (ChargerInterface)Naming.lookup("rmi://localhost:5000/charger");
-
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(script);
-
-            chargerInterface.upload("RequestScript_N" + script.uuid + ".txt",bos.toByteArray());
-        }catch (Exception e) { e.printStackTrace(); }
 
     }
 
     private Script Read(String scriptId) throws RemoteException {
         Script rscript = null;
 
-        try{
-            ChargerInterface chargerInterface = (ChargerInterface)Naming.lookup("rmi://localhost:5000/charger");
 
-
-            byte[] data = chargerInterface.download("RequestScript_N" + scriptId.toString() + ".txt");
-
-            ByteArrayInputStream in = new ByteArrayInputStream(data);
-            ObjectInputStream is = new ObjectInputStream(in);
-
-            rscript = (Script)is.readObject();
-        }catch (Exception e) { e.printStackTrace(); }
         return rscript;
+    }
+
+
+    @Override
+    public void set_cpu_usage(double cpu_usage) throws RemoteException {
+        this.cpu_usage = cpu_usage;
     }
 
     @Override
     public String run(Script script) throws RemoteException {
+        System.out.println("REQUEST FROM CLIENT - CPU USAGE : " +  cpu_usage);
         Script _newS = script.setUuid(UUID.randomUUID().toString());
         this.scriptArrayList.add(_newS);
 
         Charge(script);
         Script chargerInfo = Read(script.uuid);
 
-        return chargerInfo.uuid;
+        return _newS.uuid;
     }
 
     @Override

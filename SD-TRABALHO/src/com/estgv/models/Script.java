@@ -6,12 +6,12 @@ public class Script implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public String uuid;
-    public String script;
+    public String script; //ex: put text1.txt
+    public byte[] file;
     public String result;
 
-    public Script(String script)
+    public Script()
     {
-        this.script = script;
     }
 
     public Script setUuid(String uuid){
