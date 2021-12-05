@@ -13,8 +13,8 @@ public class FTPHelper {
         try
         {
             ftp = new FTPClient();
-            ftp.connect("localhost");
-            ftp.login("sd-user","12345");
+            ftp.connect("192.168.1.93");
+            ftp.login("tester","password");
             ftp.setFileTransferMode(ftp.BINARY_FILE_TYPE);
         }catch (Exception e)
         {

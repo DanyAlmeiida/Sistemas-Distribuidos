@@ -5,9 +5,13 @@ import com.estgv.interfaces.ProcessorReplicaManagerInterface;
 import com.estgv.interfaces.ScriptsInterface;
 import com.estgv.models.ProcessorInfo;
 import com.estgv.models.Script;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.Naming;
@@ -15,23 +19,20 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.UUID;
 
 import static java.lang.System.exit;
 
 public class Client {
 
-    public Client()
-    {
+    public Client() throws JSchException, SftpException {
         Integer option = draw_menu();
         switch (option)
         {
             case 1:
-                UploadFile();
-                break;
-            case 2:
                 ExecuteScript();
                 break;
-            case 3:
+            case 2:
                 new NotImplementedException();
                 break;
             case 0:
@@ -42,7 +43,16 @@ public class Client {
         }
 
     }
-    private void ExecuteScript(){
+    private void ExecuteScript() throws JSchException, SftpException {
+        Script script = new Script();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\nScript to Execute:");
+        String s = scanner.nextLine();
+        Path p = create_temp_file(s);
+        UploadFile(p);
+        script.script = p.getFileName().toString();
+
         ScriptsInterface scriptsInterface = null;
         ProcessorReplicaManagerInterface processorReplicaManagerInterface = null;
         try{
@@ -53,11 +63,7 @@ public class Client {
             } catch (NotBoundException | RemoteException | MalformedURLException ex)
             {ex.printStackTrace(); }
 
-            Script script = new Script();
-            Scanner scanner = new Scanner(System.in);
 
-            System.out.println("\nScript to Execute: ");
-            script.script = scanner.next();
 
             String id = scriptsInterface.run(script);
             System.out.println(id);
@@ -65,25 +71,35 @@ public class Client {
         catch(Exception e)
         {System.out.println(e.getMessage()); }
     }
-
-    private void UploadFile(){
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("\nFile Path: ");
-        Path path = Paths.get(scanner.next());
-
-        FTPHelper ftpHelper = new FTPHelper();
+    private Path create_temp_file(String script){
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        Path temp = null;
         try {
-            boolean res = ftpHelper.uploadFile(path);
-            if(res == true)
-                System.out.println("File Uploaded!");
-            else
-                System.out.println("Couldn't upload the file. Please try again...");
 
-            ftpHelper.disconnect();
-        } catch (Exception e) {
+            // Create an temporary file
+            temp = Files.createTempFile(String.valueOf(UUID.randomUUID()), ".txt");
+
+            Writer writer = null;
+            try {
+                writer = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(String.valueOf(temp.toAbsolutePath())), "utf-8"));
+                writer.write(script);
+            } catch (IOException ex) {
+                // Report
+            } finally {
+                try {writer.close();} catch (Exception ex) {/*ignore*/}
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return temp;
+    }
+    private void UploadFile(Path path) throws JSchException, SftpException {
+
+
+        SFTPClient sftpClient = new SFTPClient();
+        sftpClient.upload(path);
+
     }
 
     public static void printMenu(String[] options){
@@ -95,9 +111,9 @@ public class Client {
     }
 
     public Integer  draw_menu() {
-        String[] options = {"1 - Upload File",
-                "2 - Execute Script",
-                "3 - Credits",
+        String[] options = {
+                "1 - Execute Script",
+                "2 - Credits",
                 "0 - Exit",
         };
         Scanner scanner = new Scanner(System.in);
@@ -124,8 +140,7 @@ public class Client {
     /**
      * Run this class as an application.
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws JSchException, SftpException {
         Client client = new Client();
     }
 

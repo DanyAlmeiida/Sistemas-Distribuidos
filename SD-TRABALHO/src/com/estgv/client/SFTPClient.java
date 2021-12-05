@@ -4,43 +4,68 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.*;
+import jdk.internal.util.xml.impl.Input;
+
+import java.io.*;
+import java.nio.file.Path;
+import java.util.Properties;
 
 public class SFTPClient {
 
     private static Session session;
     private String privateKeyPath;
-    public static void main(String[] args) throws JSchException {
-        connect();
+    public SFTPClient() {
+        try {
+            connect();
+        } catch (JSchException e) {
+            e.printStackTrace();
+        }
     }
+
+
+
+
     public static void connect() throws JSchException {
         JSch jsch = new JSch();
 
-        // Uncomment the line below if the FTP server requires certificate
-        //jsch.addIdentity("C:\\Users\\Dany-PC\\Documents\\cert1.pfx");
 
-        String server = "localhost";
+        String server = "127.0.0.1";
         session = jsch.getSession(server);
         // Uncomment the two lines below if the FTP server requires password
-        session = jsch.getSession("sd-user", server, 21);
-        session.setPassword("12345");
+        session = jsch.getSession("tester", server, 22);
+        session.setPassword("password");
         session.setConfig("StrictHostKeyChecking", "no");
         session.connect();
     }
 
-    public void upload(String source, String destination) throws JSchException, SftpException {
+
+    public void upload(Path path) throws JSchException, SftpException {
         Channel channel = session.openChannel("sftp");
         channel.connect();
         ChannelSftp sftpChannel = (ChannelSftp) channel;
-        sftpChannel.put(source, destination);
+        sftpChannel.put(path.toAbsolutePath().toString(),path.getFileName().toString());
         sftpChannel.exit();
     }
 
-    public void download(String source, String destination) throws JSchException, SftpException {
+    public String get_content(String filename) throws JSchException {
+        StringBuilder sb = new StringBuilder();
         Channel channel = session.openChannel("sftp");
         channel.connect();
         ChannelSftp sftpChannel = (ChannelSftp) channel;
-        sftpChannel.get(source, destination);
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(sftpChannel.get(filename)));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + System.lineSeparator());
+            }
+
+        } catch (Exception e) {
+            System.out.println("Exception occurred during reading file from SFTP server due to " + e.getMessage());
+            e.getMessage();
+
+        }
         sftpChannel.exit();
+        return sb.toString();
     }
 
     public void disconnect() {

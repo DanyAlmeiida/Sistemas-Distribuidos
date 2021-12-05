@@ -45,9 +45,8 @@ public class Processor {
             ResourcesThread  resourcesThread = new ResourcesThread(uuid);
             resourcesThread.start();
 
-            ScriptRequestsThreads scriptRequestsThreads = new ScriptRequestsThreads();
-            scriptRequestsThreads.serverAddress = address;
-            scriptRequestsThreads.start();
+
+
         }catch(Exception e) {
             System.out.println("server main " + e.getMessage());
         }

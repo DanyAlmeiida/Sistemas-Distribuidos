@@ -16,5 +16,5 @@ public interface ScriptsInterface extends Remote
 
     Script result(Integer scriptId) throws RemoteException;
 
-    LinkedList<Script> pending() throws RemoteException;
+    Script get_pending_script() throws RemoteException;
 }
