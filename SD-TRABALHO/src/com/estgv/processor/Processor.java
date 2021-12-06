@@ -37,7 +37,7 @@ public class Processor {
                     0.0
             ));
 
-            scriptsManager = new ScriptsManager();
+            scriptsManager = new ScriptsManager(uuid);
             r.rebind("scripts", scriptsManager );
             System.out.println("server ready");
 

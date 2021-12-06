@@ -1,5 +1,6 @@
 package com.estgv;
 
+import com.estgv.brain.Brain;
 import com.estgv.client.SFTPClient;
 import com.estgv.processor.Processor;
 import com.estgv.registry.RMIRegistry;
@@ -24,6 +25,7 @@ public class Test {
                 Processor.main(new String[]{String.valueOf(UUID.randomUUID()),"2025"});
                 //Processor.main(new String[]{String.valueOf(UUID.randomUUID()),"2026"});
                 //Processor.main(new String[]{String.valueOf(UUID.randomUUID()),"2027"});
+                Brain.main(new String[]{String.valueOf(UUID.randomUUID()),"2030"});
             }
         });
         t.start();

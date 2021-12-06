@@ -1,6 +1,7 @@
 package com.estgv.client;
 
 
+import com.estgv.interfaces.BrainInterface;
 import com.estgv.interfaces.ProcessorReplicaManagerInterface;
 import com.estgv.interfaces.ScriptsInterface;
 import com.estgv.models.ProcessorInfo;
@@ -25,7 +26,7 @@ import static java.lang.System.exit;
 
 public class Client {
 
-    public Client() throws JSchException, SftpException {
+    public Client() throws JSchException, SftpException, MalformedURLException, NotBoundException, RemoteException {
         Integer option = draw_menu();
         switch (option)
         {
@@ -34,6 +35,9 @@ public class Client {
                 break;
             case 2:
                 new NotImplementedException();
+                break;
+            case 3:
+                GetResult();
                 break;
             case 0:
                 exit(0);
@@ -51,7 +55,8 @@ public class Client {
         String s = scanner.nextLine();
         Path p = create_temp_file(s);
         UploadFile(p);
-        script.script = p.getFileName().toString();
+        script.script = s;
+        script.file = p.getFileName().toString();
 
         ScriptsInterface scriptsInterface = null;
         ProcessorReplicaManagerInterface processorReplicaManagerInterface = null;
@@ -60,16 +65,30 @@ public class Client {
                 processorReplicaManagerInterface = (ProcessorReplicaManagerInterface) Naming.lookup("rmi://localhost:2024/processor_manager");
                 ProcessorInfo processorInfo = processorReplicaManagerInterface.get();
                 scriptsInterface = (ScriptsInterface) Naming.lookup(processorInfo.serverAddress);
+
             } catch (NotBoundException | RemoteException | MalformedURLException ex)
             {ex.printStackTrace(); }
 
 
-
             String id = scriptsInterface.run(script);
             System.out.println(id);
+            wait(1000);
+
+
         }
         catch(Exception e)
         {System.out.println(e.getMessage()); }
+    }
+    private void GetResult() throws MalformedURLException, NotBoundException, RemoteException {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\nScript UUID:");
+        String uuid = scanner.nextLine();
+
+        BrainInterface brainInterface = (BrainInterface) Naming.lookup("rmi://localhost:2030/resultmodels");
+        Script script = brainInterface.get_result(uuid);
+        System.out.println(script.PrintInfo());
+
     }
     private Path create_temp_file(String script){
         String tmpdir = System.getProperty("java.io.tmpdir");
@@ -114,6 +133,7 @@ public class Client {
         String[] options = {
                 "1 - Execute Script",
                 "2 - Credits",
+                "3 - Get Result",
                 "0 - Exit",
         };
         Scanner scanner = new Scanner(System.in);
@@ -140,7 +160,7 @@ public class Client {
     /**
      * Run this class as an application.
      */
-    public static void main(String[] args) throws JSchException, SftpException {
+    public static void main(String[] args) throws JSchException, SftpException, MalformedURLException, NotBoundException, RemoteException {
         Client client = new Client();
     }
 

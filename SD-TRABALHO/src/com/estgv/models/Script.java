@@ -7,8 +7,8 @@ public class Script implements Serializable {
     private static final long serialVersionUID = 1L;
     public String uuid;
     public String script; //ex: put text1.txt
-    public String target_server;
-    public byte[] file;
+    public String processed_by;
+    public String file;
     public String result;
 
     public Script()
@@ -25,6 +25,8 @@ public class Script implements Serializable {
         sb.append("\n---------------- Script Log # "+ this.uuid + " -------------");
         sb.append("\n- Script: " + this.script);
         sb.append("\n- Result: " + (this.result == null ? "None" : this.result) );
+        sb.append("\n- SftpFile: " + (this.file == null ? "None" : this.file) );
+        sb.append("\n- ProcessorUUID: " + (this.processed_by == null ? "None" : this.processed_by) );
         sb.append("\n------------ Script Log End # "+ this.uuid + " -------------\n");
         return sb.toString();
     }
