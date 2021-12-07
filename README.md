@@ -13,7 +13,7 @@ A utilização do conteudo deste repositorio é simplesmente para a realização
 
 #### Quick Start
 
-Precisa ter instalado o IntelliJ IDEA..
+Precisa ter instalado o IntelliJ IDEA.
 
 #### Correr o programa
 
