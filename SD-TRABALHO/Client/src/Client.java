@@ -16,9 +16,15 @@ import java.util.UUID;
 import static java.lang.System.exit;
 
 public class Client {
-
+    private static String martelada = "";
     public Client() throws JSchException, SftpException, MalformedURLException, NotBoundException, RemoteException {
-        Integer option = draw_menu();
+        Integer option = -1;
+        if(martelada.isEmpty()) {
+             option = draw_menu();
+        }
+        else{
+            option = 1;
+        }
         switch (option)
         {
             case 1:
@@ -39,11 +45,17 @@ public class Client {
 
     }
     private void ExecuteScript() throws JSchException, SftpException {
+        String s = null;
         Script script = new Script();
-        Scanner scanner = new Scanner(System.in);
+        if(martelada.isEmpty()) {
 
-        System.out.println("\nScript to Execute:");
-        String s = scanner.nextLine();
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("\nScript to Execute:");
+            s = scanner.nextLine();
+        }else{
+            s = martelada;
+        }
         Path p = create_temp_file(s);
         UploadFile(p);
         script.script = s;
@@ -152,6 +164,8 @@ public class Client {
      * Run this class as an application.
      */
     public static void main(String[] args) throws JSchException, SftpException, MalformedURLException, NotBoundException, RemoteException {
+        martelada = args[0];
+
         Client client = new Client();
     }
 

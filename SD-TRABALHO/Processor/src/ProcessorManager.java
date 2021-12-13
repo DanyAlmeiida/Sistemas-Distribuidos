@@ -1,24 +1,49 @@
 import com.jcraft.jsch.JSchException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ProcessorManager extends UnicastRemoteObject implements ProcessorInterface
 {
     private String uuid = "";
+
     public double cpu_usage = 0.0;
     private static final long serialVersionUID = 1L;
     private ScriptQueue scriptQueue = new ScriptQueue();
+    private Group group;
+    private Long delayHearbeat = (long)(Math.random() * 5000);
 
-    public ProcessorManager(String id_Server) throws RemoteException {
+    public ProcessorManager(String id_Server, String processor_ip) throws RemoteException {
         this.uuid = id_Server;
+        try {
+            group = new Group(uuid,processor_ip,new MsgHandlers());
+
+            Thread tProcessGroup = (new Thread() {
+                public void run() {
+                    while (true) {
+                        try {
+                            sleep(delayHearbeat);
+                            group.send(new Heartbeat(uuid,cpu_usage,scriptQueue.getAll(),delayHearbeat));
+                            Thread thread = new Thread(group);
+                            thread.start();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            tProcessGroup.start();
+        } catch (Group.GroupException e) {
+            e.printStackTrace();
+        }
+
         //region Process-Pending-Scripts
 
         Thread tProcess = (new Thread() {
@@ -43,6 +68,7 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
 
         //endregion
     }
+
     private void process_script(Script script) throws IOException, JSchException {
         SFTPClient  sftpClient = new SFTPClient();
 
@@ -80,7 +106,7 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     public String run(Script script) throws RemoteException {
         Script _newS =  script.setUuid(UUID.randomUUID().toString());
 
-        if(this.cpu_usage <  0.05)
+        if(this.cpu_usage <  0.005)
         {
             try {
                 process_script(script);
@@ -108,5 +134,18 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     public Script get_pending_script() throws RemoteException {
         return (Script) scriptQueue.get();
     }
+    public class MsgHandlers implements Group.MsgHandler{
+        MsgHandlers(){
+
+        }
+
+
+        @Override
+        public void handle(Heartbeat heartbeat) {
+            System.out.println(heartbeat.processorId + " with " + heartbeat.scriptArrayList.length + " in list");
+        }
+
+    }
+
 
 }

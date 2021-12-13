@@ -1,9 +1,19 @@
+import java.io.IOException;
+import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class Replica {
-    public Replica() {
+    final static String INET_ADDR = "224.0.0.3";
+    InetAddress addr;
+    public Replica() throws RemoteException{
+        super();
+        try {
+            addr = InetAddress.getByName(INET_ADDR);
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
     }
 
     public static void main(String[] args) {

@@ -5,7 +5,6 @@ import java.rmi.registry.Registry;
 
 public class Processor {
     public static Registry r = null;
-    public static Integer port;
     public static ProcessorManager processorManager;
 
     public Processor(String uuid, Integer port)
@@ -22,11 +21,10 @@ public class Processor {
             ReplicaInterface replicaManagerInterface = (ReplicaInterface)Naming.lookup("rmi://localhost:2024/processor_manager");
             replicaManagerInterface.add(new ProcessorInfo(
                     uuid,
-                    address ,
-                    0.0
+                    address
             ));
 
-            processorManager = new ProcessorManager(uuid);
+            processorManager = new ProcessorManager(uuid,address);
             r.rebind("scripts", processorManager);
             System.out.println("server ready");
 

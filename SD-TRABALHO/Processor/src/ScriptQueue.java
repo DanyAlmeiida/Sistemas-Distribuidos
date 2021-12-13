@@ -22,6 +22,19 @@ public class ScriptQueue {
         return list.removeFirst();
     }
 
+    public void removeByScriptId(String scriptId){
+        if(list.isEmpty()){return;}
+        else{
+            for(Script script: list)
+            {
+                if(script.uuid == scriptId)
+                {
+                    list.remove(script);
+                    break;
+                }
+            }
+        }
+    }
     /**
      * Returns all elements from the queue and clears it.
      */

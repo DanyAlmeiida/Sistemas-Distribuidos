@@ -6,6 +6,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
+import java.util.logging.Logger;
 
 public class ResourcesThread  extends Thread{
     private String processorId = "";
@@ -23,7 +24,6 @@ public class ResourcesThread  extends Thread{
         {
             double x = osBean.getSystemCpuLoad();
             cpu_mean_usage += x;
-            //    System.out.println(it + " = " + df.format(x));
 
             try {
                 sleep(1000);
@@ -55,7 +55,6 @@ public class ResourcesThread  extends Thread{
     public void setCpu_mean_usage(double cpu_mean_usage) throws MalformedURLException, NotBoundException, RemoteException {
         ReplicaInterface replicaManagerInterface = (ReplicaInterface) Naming.lookup("rmi://localhost:2024/processor_manager");
         replicaManagerInterface.set_cpu_usage(processorId,cpu_mean_usage);
-
         System.out.println("\nPROCESSOR [ " + processorId + " ] CPU USAGE:" + df.format(cpu_mean_usage));
     }
 }
