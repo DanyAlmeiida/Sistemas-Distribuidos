@@ -31,8 +31,7 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
                         try {
                             sleep(delayHearbeat);
                             group.send(new Heartbeat(uuid,cpu_usage,scriptQueue.getAll(),delayHearbeat));
-                            Thread thread = new Thread(group);
-                            thread.start();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -43,6 +42,9 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
         } catch (Group.GroupException e) {
             e.printStackTrace();
         }
+        
+        Thread thread = new Thread(group);
+        thread.start();
 
         //region Process-Pending-Scripts
 
