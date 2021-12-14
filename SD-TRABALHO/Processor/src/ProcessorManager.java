@@ -13,7 +13,6 @@ import java.util.UUID;
 public class ProcessorManager extends UnicastRemoteObject implements ProcessorInterface
 {
     private String uuid = "";
-
     public double cpu_usage = 0.0;
     private static final long serialVersionUID = 1L;
     private ScriptQueue scriptQueue = new ScriptQueue();
@@ -22,6 +21,9 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
 
     public ProcessorManager(String id_Server, String processor_ip) throws RemoteException {
         this.uuid = id_Server;
+
+        //region thread-group-hearbeat
+
         try {
             group = new Group(uuid,processor_ip,new MsgHandlers());
 
@@ -31,7 +33,6 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
                         try {
                             sleep(delayHearbeat);
                             group.send(new Heartbeat(uuid,cpu_usage,scriptQueue.getAll(),delayHearbeat));
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -42,9 +43,15 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
         } catch (Group.GroupException e) {
             e.printStackTrace();
         }
-        
+
+        //endregion
+
+        //region thread-group-listenner
+
         Thread thread = new Thread(group);
         thread.start();
+
+        //endregion
 
         //region Process-Pending-Scripts
 
@@ -72,11 +79,16 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     }
 
     private void process_script(Script script) throws IOException, JSchException {
-        SFTPClient  sftpClient = new SFTPClient();
 
         //region read-file-script to execute
+
+        SFTPClient  sftpClient = new SFTPClient();
+
         String sb = sftpClient.get_content(script.file);
+
         //endregion
+
+        //region execute-script
 
         ProcessBuilder processBuilder = new ProcessBuilder("cmd","/c",sb);
         Process process = processBuilder.start();
@@ -98,7 +110,10 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //endregion
     }
+
     @Override
     public void set_cpu_usage(double cpu_usage) throws RemoteException {
         this.cpu_usage = cpu_usage;
@@ -117,20 +132,15 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
             } catch (JSchException e) {
                 e.printStackTrace();
             }
-
-        }else
+        }
+        else
         {
             scriptQueue.put(_newS);
-
         }
 
         return _newS.uuid;
     }
 
-    @Override
-    public Script result(Integer scriptId) throws RemoteException {
-        return null;
-    }
 
     @Override
     public Script get_pending_script() throws RemoteException {
@@ -140,7 +150,6 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
         MsgHandlers(){
 
         }
-
 
         @Override
         public void handle(Heartbeat heartbeat) {
