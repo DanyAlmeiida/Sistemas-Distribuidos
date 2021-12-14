@@ -6,8 +6,6 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ProcessorManager extends UnicastRemoteObject implements ProcessorInterface
