@@ -1,5 +1,6 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 interface BrainInterface extends Remote {
 
@@ -7,4 +8,5 @@ interface BrainInterface extends Remote {
 
     void set_result(Script script) throws RemoteException;
 
+    List<String> getCompletedReq(String Px) throws RemoteException;
 }

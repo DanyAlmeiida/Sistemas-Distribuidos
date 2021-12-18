@@ -91,7 +91,7 @@ public class Group implements Runnable {
             // repeatedly: listen to MulticastSocket created in constructor, and on receipt
             // of a datagram call "handle" on the instance
             // of Group.MsgHandler which was supplied to the constructor
-            buf = new byte[1000];
+            buf = new byte[1000*10*100];
 
             try {
 

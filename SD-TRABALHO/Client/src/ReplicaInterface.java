@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 public interface ReplicaInterface extends Remote {
 
     void add(ProcessorInfo processorInfo) throws RemoteException;
+
     ProcessorInfo get() throws RemoteException;
 
     void set_cpu_usage(String processorObejctId, double cpu_usage) throws RemoteException ;
