@@ -7,7 +7,7 @@ public interface ProcessorInterface extends Remote
 
     String run(Script script) throws RemoteException;
 
-    Script result(Integer scriptId) throws RemoteException;
-
     Script get_pending_script() throws RemoteException;
+
+    void resume(String Px) throws RemoteException;
 }

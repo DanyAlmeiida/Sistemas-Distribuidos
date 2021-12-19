@@ -1,7 +1,12 @@
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
-public class ScriptQueue {
+public class ScriptQueue implements Serializable {
     private LinkedList<Script> list = new LinkedList<Script>();
+
+
 
     /**
      * Puts object in queue.
@@ -38,13 +43,13 @@ public class ScriptQueue {
     /**
      * Returns all elements from the queue and clears it.
      */
-    public Object[] getAll() {
-        Object[] res = new Object[list.size()];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = list.get(i);
-        }
-        list.clear();
-        return res;
+    public List<Script> getAll() {
+        List<Script> myAL = new ArrayList<>();
+
+        for (Script alObject : list)
+            myAL.add(alObject);
+
+        return myAL;
     }
 
 

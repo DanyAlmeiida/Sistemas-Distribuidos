@@ -18,18 +18,18 @@ public class Processor {
         try{
             String address = "rmi://localhost:" + port + "/scripts";
 
-            ReplicaInterface replicaManagerInterface = (ReplicaInterface)Naming.lookup("rmi://localhost:2024/processor_manager");
+            /*ReplicaInterface replicaManagerInterface = (ReplicaInterface)Naming.lookup("rmi://localhost:2024/processor_manager");
             replicaManagerInterface.add(new ProcessorInfo(
                     uuid,
                     address
-            ));
+            ));*/
 
             processorManager = new ProcessorManager(uuid,address);
             r.rebind("scripts", processorManager);
             System.out.println("server ready");
 
-            ResourcesThread  resourcesThread = new ResourcesThread(uuid);
-            resourcesThread.start();
+            //ResourcesThread  resourcesThread = new ResourcesThread(uuid);
+            //resourcesThread.start();
 
         }catch(Exception e) {
             System.out.println("server main " + e.getMessage());
