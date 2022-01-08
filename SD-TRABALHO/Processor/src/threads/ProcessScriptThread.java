@@ -33,11 +33,15 @@ public class ProcessScriptThread implements Runnable{
             try {
                 Thread.sleep(1000);
                 Print();
-                //Script script = scriptQueue.get(this.serverId).get();
-                //if (script != null) {
-                    //process_script(script);
-                //}
+                Script script = scriptQueue.get(this.serverId).get();
+                if (script != null) {
+                    process_script(script);
+                }
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (JSchException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

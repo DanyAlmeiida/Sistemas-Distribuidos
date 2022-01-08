@@ -83,7 +83,7 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     public String run(Script script) throws RemoteException {
         Script _newS =  script.setUuid(UUID.randomUUID().toString());
 
-       /* if(this.cpu_usage >  0.005)
+        if(this.cpu_usage >  0.005)
         {
            try {
                ProcessScriptController.process(scriptQueue,script,uuid);
@@ -92,11 +92,11 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
             }
         }
         else
-        {*/
+        {
             scriptQueue.get(this.uuid).put(_newS);
             tProcessGroupHearBeat.set_queue(scriptQueue.get(this.uuid));
             tProcessPendingScripts.set_queue(scriptQueue);
-        //}
+        }
 
         return _newS.uuid;
     }
