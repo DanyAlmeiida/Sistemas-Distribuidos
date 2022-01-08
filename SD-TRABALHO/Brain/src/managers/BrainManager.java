@@ -1,8 +1,11 @@
+package managers;
+
+import interfaces.BrainInterface;
+import models.Script;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class BrainManager extends UnicastRemoteObject implements BrainInterface {

@@ -15,7 +15,7 @@ public class AfkProcessorScanThread implements Runnable{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         while (true) {
             try {
                 System.out.println(this.replicas.size() + " processadores");

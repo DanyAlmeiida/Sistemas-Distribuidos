@@ -1,10 +1,8 @@
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
+import manager.BalancerManager;
+
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.UUID;
 
 public class Balancer {

@@ -33,7 +33,9 @@ public class CpuMeanUsageThread implements Runnable {
                 if(it == it_max)
                 {
                     cpu_mean_usage /= it_max+1;
-                    cpuMeanUsageInterface.set_cpu_usage(cpu_mean_usage);
+                    double aux_cpusage=cpu_mean_usage;
+                    System.out.println("Usage: " + aux_cpusage);
+                    cpuMeanUsageInterface.set_cpu_usage(aux_cpusage);
                     it = 0;
                     cpu_mean_usage = 0;
                 }

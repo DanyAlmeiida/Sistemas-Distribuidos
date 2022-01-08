@@ -1,3 +1,5 @@
+package interfaces;
+
 import models.ProcessorInfo;
 
 import java.rmi.Remote;

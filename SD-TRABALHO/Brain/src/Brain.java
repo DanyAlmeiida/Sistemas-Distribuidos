@@ -1,4 +1,5 @@
-import java.rmi.Naming;
+import managers.BrainManager;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

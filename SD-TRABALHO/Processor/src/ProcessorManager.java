@@ -33,15 +33,23 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     private Group multicastGroup;
     private Long delayHearbeat = (long)(Math.random() * 5000);
     private Boolean IsToSendHearbeat = false;
+    private HeartBeatThread tProcessGroupHearBeat;
+    private ProcessScriptThread tProcessPendingScripts;
     public ProcessorManager(String id_Server, String processor_ip) throws RemoteException {
 
         this.uuid = id_Server;
         this.processor_ip = processor_ip;
 
         try {
+
             scriptQueue.put(id_Server,new ScriptQueue());
 
-            Thread tMeanCPU = new Thread(new CpuMeanUsageThread(cpu_usage_mean -> this.cpu_usage = cpu_usage_mean ));
+            tProcessGroupHearBeat = new HeartBeatThread(uuid,processor_ip, this.cpu_usage,
+                    scriptQueue.get(this.uuid), delayHearbeat, "PROCESSOR", "heartbeat",
+                    heartbeat -> multicastGroup.send(heartbeat));
+
+            Thread tMeanCPU = new Thread(new CpuMeanUsageThread(cpu_usage_mean ->
+            {this.cpu_usage = cpu_usage_mean; tProcessGroupHearBeat.set_cpu_usage(this.cpu_usage); } ));
             tMeanCPU.start();
 
             JoinInfo joinInfo = new JoinInfo(processor_ip,uuid,"PROCESSOR");
@@ -50,14 +58,12 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
             Thread thread = new Thread(multicastGroup);
             thread.start();
 
-            Thread tProcessGroupHearBeat = new Thread(new HeartBeatThread(uuid,processor_ip, cpu_usage,
-                    scriptQueue.get(this.uuid), delayHearbeat, "PROCESSOR", "heartbeat",
-                    heartbeat -> multicastGroup.send(heartbeat)));
+            Thread thread1 = new Thread(tProcessGroupHearBeat);
+            thread1.start();
 
-            tProcessGroupHearBeat.start();
-
-            Thread tProcessPendingScripts = new Thread(new ProcessScriptThread(scriptQueue,uuid));
-            tProcessPendingScripts.start();
+            tProcessPendingScripts = new ProcessScriptThread(scriptQueue,uuid);
+            Thread tProcessPending = new Thread(tProcessPendingScripts);
+            tProcessPending.start();
 
         } catch (Group.GroupException e) {
             e.printStackTrace();
@@ -77,7 +83,7 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     public String run(Script script) throws RemoteException {
         Script _newS =  script.setUuid(UUID.randomUUID().toString());
 
-        if(this.cpu_usage <  0.005)
+       /* if(this.cpu_usage >  0.005)
         {
            try {
                ProcessScriptController.process(scriptQueue,script,uuid);
@@ -86,9 +92,11 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
             }
         }
         else
-        {
+        {*/
             scriptQueue.get(this.uuid).put(_newS);
-        }
+            tProcessGroupHearBeat.set_queue(scriptQueue.get(this.uuid));
+            tProcessPendingScripts.set_queue(scriptQueue);
+        //}
 
         return _newS.uuid;
     }
@@ -122,6 +130,7 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
                 scriptQueue.get(Px).getAll()) {
             this.scriptQueue.get(this.uuid).put(script);
         }
+        this.scriptQueue.remove(Px);
     }
 
     private void handle(Heartbeat heartbeat) {

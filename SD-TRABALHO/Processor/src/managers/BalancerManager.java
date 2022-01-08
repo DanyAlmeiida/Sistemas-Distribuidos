@@ -1,10 +1,10 @@
 package managers;
 
+import interfaces.BalancerInterface;
 import interfaces.ProcessorInterface;
 import models.Heartbeat;
 import models.JoinInfo;
 import models.ProcessorInfo;
-import interfaces.BalancerInterface;
 import threads.Group;
 import utils.ByteArrayUtils;
 

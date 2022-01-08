@@ -1,8 +1,12 @@
+package interfaces;
+
+import models.Script;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-interface BrainInterface extends Remote {
+public interface BrainInterface extends Remote {
 
     Script get_result(String uuid) throws RemoteException;
 
