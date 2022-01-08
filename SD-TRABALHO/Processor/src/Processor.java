@@ -1,4 +1,3 @@
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -18,18 +17,10 @@ public class Processor {
         try{
             String address = "rmi://localhost:" + port + "/scripts";
 
-            /*ReplicaInterface replicaManagerInterface = (ReplicaInterface)Naming.lookup("rmi://localhost:2024/processor_manager");
-            replicaManagerInterface.add(new ProcessorInfo(
-                    uuid,
-                    address
-            ));*/
-
             processorManager = new ProcessorManager(uuid,address);
             r.rebind("scripts", processorManager);
             System.out.println("server ready");
 
-            //ResourcesThread  resourcesThread = new ResourcesThread(uuid);
-            //resourcesThread.start();
 
         }catch(Exception e) {
             System.out.println("server main " + e.getMessage());

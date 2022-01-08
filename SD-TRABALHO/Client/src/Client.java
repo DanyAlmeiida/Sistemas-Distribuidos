@@ -1,5 +1,10 @@
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import interfaces.BrainInterface;
+import models.SFTPClient;
+import models.Script;
+import interfaces.ProcessorInterface;
+import models.ProcessorInfo;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
@@ -62,10 +67,10 @@ public class Client {
         script.file = p.getFileName().toString();
 
         ProcessorInterface processorInterface = null;
-        ReplicaInterface processorReplicaManagerInterface = null;
+        BalancerInterface processorReplicaManagerInterface = null;
         try{
             try {
-                processorReplicaManagerInterface = (ReplicaInterface) Naming.lookup("rmi://localhost:2024/processor_manager");
+                processorReplicaManagerInterface = (BalancerInterface) Naming.lookup("rmi://localhost:2024/balancer");
                 ProcessorInfo processorInfo = processorReplicaManagerInterface.get();
                 processorInterface = (ProcessorInterface) Naming.lookup(processorInfo.serverAddress);
 
@@ -165,7 +170,6 @@ public class Client {
      */
     public static void main(String[] args) throws JSchException, SftpException, MalformedURLException, NotBoundException, RemoteException {
         martelada = args[0];
-
         Client client = new Client();
     }
 

@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Balancer/Balancer.iml" filepath="$PROJECT_DIR$/Balancer/Balancer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Brain/Brain.iml" filepath="$PROJECT_DIR$/Brain/Brain.iml" />
       <module fileurl="file://$PROJECT_DIR$/Client/Client.iml" filepath="$PROJECT_DIR$/Client/Client.iml" />
       <module fileurl="file://$PROJECT_DIR$/Multicast/Multicast.iml" filepath="$PROJECT_DIR$/Multicast/Multicast.iml" />
       <module fileurl="file://$PROJECT_DIR$/Processor/Processor.iml" filepath="$PROJECT_DIR$/Processor/Processor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ReplicaManager/ReplicaManager.iml" filepath="$PROJECT_DIR$/ReplicaManager/ReplicaManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/SD-TRABALHO.iml" filepath="$PROJECT_DIR$/SD-TRABALHO.iml" />
       <module fileurl="file://$PROJECT_DIR$/test/test.iml" filepath="$PROJECT_DIR$/test/test.iml" />
     </modules>

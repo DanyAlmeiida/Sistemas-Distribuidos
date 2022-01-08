@@ -5,7 +5,7 @@
       <element id="module-output" name="SD-TRABALHO" />
       <element id="module-output" name="Processor" />
       <element id="module-output" name="Multicast" />
-      <element id="module-output" name="ReplicaManager" />
+      <element id="module-output" name="Balancer" />
       <element id="module-output" name="Brain" />
       <element id="module-output" name="Client" />
       <element id="module-output" name="test" />

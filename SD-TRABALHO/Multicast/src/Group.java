@@ -1,73 +1,58 @@
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.SocketException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.Optional;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Group implements Runnable {
-        public static String host = null;
-        public static String senderName = null;
-        public static MulticastSocket s = null;
-        public static InetAddress group = null;
+        int port = 6789;
+        public static List<JoinInfo> joinInfo = new ArrayList<JoinInfo>();
+        public static MulticastSocket multicastSocket = null;
+        public static InetAddress multicastGroup = null;
         public static byte[] buf = null;
-        public static Registry registry = null;
-        public static ReplicaInterface server;
-        public static long lastSeqReceived1 = 0;
-        public static int count = 0;
-        public static MsgHandler handles = null;
-        public static Heartbeat heartbeat;
-        //public static History hist;
+        public static TrafficHandler trafficHandler;
+        public Group(JoinInfo joinInfo, TrafficHandler trafficHandler ) throws GroupException {
 
-        public Group(String processorId, String processorIp, MsgHandler handler) throws GroupException {
+            this.joinInfo.add(joinInfo);
+            this.trafficHandler = trafficHandler;
 
-            this.host = processorIp;
-            this.senderName = processorId;
-            handles = handler;
-          //  hist = new History();
+            join();
+        }
+
+        public Group(JoinInfo joinInfo) throws GroupException {
+
+            this.joinInfo.add(joinInfo);
+            join();
+        }
+
+        public void join(){
             try {
 
-                int port = 6789;
-                registry = LocateRegistry.getRegistry(2024);
-                server = (ReplicaInterface) registry.lookup("processor_manager");
-                InetAddress INET_ADDR = server.add(new ProcessorInfo(processorId,processorIp));
-                group = INET_ADDR;
-                s = new MulticastSocket(port);
-                // s.setTimeToLive(1);
-                s.joinGroup(group);
+                //region setup-group multicastsocket and join
 
-            } catch (SocketException e) {
+                multicastGroup = InetAddress.getByName("224.0.0.3");
+                multicastSocket = new MulticastSocket(port);
+                multicastSocket.joinGroup(multicastGroup);
+
+                //endregion
+
+
+            }
+            catch (SocketException e) {
                 System.out.println("Socket: " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("Exception: " + e.getMessage());
             }
         }
-    public static <T> Optional<byte[]> objectToBytes(T obj) {
-        byte[] bytes = null;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream sOut;
-        try {
-            sOut = new ObjectOutputStream(out);
-            sOut.writeObject(obj);
-            sOut.flush();
-            bytes = out.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Optional.ofNullable(bytes);
-    }
-        public void send(Heartbeat heartbeat) throws GroupException {
+
+        public void send(Heartbeat heartbeat) {
 
             // send the given message to all instances of Group using the same sequencer
             try {
-                server.heartbeat(heartbeat);
                 byte[] bytes = ByteArrayUtils.serializeObject(heartbeat);
+                DatagramPacket messageOut = new DatagramPacket(bytes, bytes.length, multicastGroup, port);
+                multicastSocket.send(messageOut);
 
-                DatagramPacket messageOut = new DatagramPacket(bytes, bytes.length, group, 6789);
-                s.send(messageOut);
             } catch (SocketException e) {
                 System.out.println("Socket: " + e.getMessage());
             } catch (IOException e) {
@@ -75,11 +60,10 @@ public class Group implements Runnable {
             }
         }
 
-        public void leave() {
+        public void leave(String address) {
             try {
-                //server.leave(senderName);
-                s.leaveGroup(group);
-                // leave group
+                joinInfo.removeIf(x -> x.host.equals(address));
+                multicastSocket.leaveGroup(multicastGroup);
             } catch (SocketException e) {
                 System.out.println("Socket: " + e.getMessage());
             } catch (IOException e) {
@@ -88,44 +72,38 @@ public class Group implements Runnable {
         }
 
         public void run() {
-            // repeatedly: listen to MulticastSocket created in constructor, and on receipt
-            // of a datagram call "handle" on the instance
-            // of Group.MsgHandler which was supplied to the constructor
+
             buf = new byte[1000*10*100];
 
             try {
 
                 while (true) {
                     DatagramPacket msgPacket = new DatagramPacket(buf, buf.length);
-                    s.receive(msgPacket);
-                    Heartbeat tes = (Heartbeat) ByteArrayUtils.deserializeBytes(msgPacket.getData());
-                    handles.handle(tes);
+                    multicastSocket.receive(msgPacket);
+                    trafficHandler.handle((Heartbeat) ByteArrayUtils.deserializeBytes(msgPacket.getData()));
                 }
             } catch (IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
         }
 
-        public interface MsgHandler {
-            public void handle(Heartbeat heartbeat);
+        private void printTable(){
+            System.out.println("############## MulticastGroup Join Info ##############");
+            for (JoinInfo info: joinInfo
+                 ) {
+                System.out.println("# " + info.whoAmI + " - " + info.name + " - " + info.host);
+            }
+            System.out.println("######################################################");
         }
 
-        public class GroupException extends Exception {
+
+
+    public class GroupException extends Exception {
 
             public GroupException(String s) {
                 super(s);
             }
 
         }
-
-        public class HeartBeater extends Thread {
-            // This thread sends heartbeat messages when required
-            public void HeartBeaters() throws Exception {
-                server.heartbeat(heartbeat);
-            }
-
-        }
-
-
 
     }

@@ -1,13 +1,14 @@
 import java.io.Serializable;
 import java.net.InetAddress;
 
-public class JoinInfo implements Serializable
-{
-    public InetAddress addr;
-    public long sequence;
-    public JoinInfo(InetAddress addr, long sequence)
-    {
-        this.addr = addr;
-        this.sequence = sequence;
+public class JoinInfo implements Serializable {
+    public String host;
+    public String name;
+    public String whoAmI;
+
+    public JoinInfo(String host, String name, String whoAmI){
+        this.host = host;
+        this.name = name;
+        this.whoAmI = whoAmI;
     }
 }
