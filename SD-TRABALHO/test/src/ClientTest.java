@@ -16,50 +16,13 @@ public class ClientTest {
             public void run() {
                 super.run();
                 try {
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
-                    Thread.sleep(500);
-                    Client.main(new String[]{"@echo Dany Almeida 123456131312312312"});
+                    Client.main(new String[]{"@echo Dany Almeida 1"});
+                    Client.main(new String[]{"@echo Dany Almeida 2"});
+                    Client.main(new String[]{"@echo Dany Almeida 3"});
                     Thread.sleep(500);
 
-                } catch (JSchException e) {
-                    e.printStackTrace();
-                } catch (SftpException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (NotBoundException e) {
-                    e.printStackTrace();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+
+              } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -67,7 +30,5 @@ public class ClientTest {
         x.start();
 
     }
-    public void await() throws InterruptedException {
 
-    }
 }

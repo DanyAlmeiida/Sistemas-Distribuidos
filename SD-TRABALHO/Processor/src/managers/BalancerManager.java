@@ -30,23 +30,22 @@ public class BalancerManager extends UnicastRemoteObject implements BalancerInte
         super();
         try {
             group = new Group(new JoinInfo(address,randomUUID,"BALANCER"));
-        synchronized (Replicas) {
+
             Thread HeartbeatScanThread = (new Thread() {
-                public void run() {
+                public  void run() {
                     while (true) {
                         try {
-                            System.out.println(Replicas.size() + " processadores");
                             sleep(1000);
-                            for (ProcessorInfo p :
-                                    Replicas) {
-                                long diffSeconds = (new Date().getTime() - p.lastHeartbeatDateTime.getTime()) / 1000;
-                                if (diffSeconds > 30 ) {
-                                    ProcessorInfo aux = p;
-                                    System.out.println("Removing processor " + aux.server_id + ". No Heartbeat founded after 30s...");
-                                    Replicas.remove(p);
-                                    Resume(aux.server_id);
+                                for (ProcessorInfo p :
+                                        Replicas) {
+                                    long diffSeconds = (new Date().getTime() - p.lastHeartbeatDateTime.getTime()) / 1000;
+                                    if (diffSeconds > 30) {
+                                        ProcessorInfo aux = p;
+                                        System.out.println("Removing processor " + aux.server_id + ". No Heartbeat founded after 30s...");
+                                        removeProcessor(p);
+                                        Resume(aux.server_id);
+                                    }
                                 }
-                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -54,7 +53,7 @@ public class BalancerManager extends UnicastRemoteObject implements BalancerInte
                 }
             });
             HeartbeatScanThread.start();
-
+            synchronized (Replicas) {
 
             Thread GroupT = (new Thread(){
              @Override
@@ -90,8 +89,6 @@ public class BalancerManager extends UnicastRemoteObject implements BalancerInte
 
                     } catch (NoSuchObjectException e) {
                         e.printStackTrace();
-                    } catch (RemoteException remoteException) {
-                        remoteException.printStackTrace();
                     }
                 }
             });
@@ -101,8 +98,10 @@ public class BalancerManager extends UnicastRemoteObject implements BalancerInte
     }
 
 
-
-    private void Resume(String Px) throws MalformedURLException, NotBoundException, RemoteException {
+    private synchronized void removeProcessor(ProcessorInfo processorInfo){
+        Replicas.remove(processorInfo);
+    }
+    private synchronized void Resume(String Px) throws MalformedURLException, NotBoundException, RemoteException {
         ProcessorInfo TargetProcessor = get();
         ProcessorInterface processorInterface = (ProcessorInterface) Naming.lookup(TargetProcessor.serverAddress);
         System.out.println("Redirecting processor " + Px + " to " + TargetProcessor.server_id);

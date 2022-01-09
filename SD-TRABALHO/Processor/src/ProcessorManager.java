@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -64,6 +65,18 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
             tProcessPendingScripts = new ProcessScriptThread(scriptQueue,uuid);
             Thread tProcessPending = new Thread(tProcessPendingScripts);
             tProcessPending.start();
+
+            Runtime.getRuntime().addShutdownHook(new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    System.out.println("Processor " + id_Server + " leaving... OFFLINE!");
+                    multicastGroup.leave(processor_ip);
+
+                }
+            });
+
 
         } catch (Group.GroupException e) {
             e.printStackTrace();
@@ -110,11 +123,16 @@ public class ProcessorManager extends UnicastRemoteObject implements ProcessorIn
     @Override
     public void resume(String Px) throws RemoteException {
         List<Script> lstScripts = this.getRequests(Px);
-        BrainInterface brainInterface = null;
         try {
-            brainInterface = (BrainInterface) Naming.lookup("rmi://localhost:2030/resultmodels");
-            List<String> scriptsCompletedUUIDS = brainInterface.getCompletedReq(Px);
-            scriptQueue.get(Px).getAll().removeIf( script -> scriptsCompletedUUIDS.contains(script.uuid));
+            ArrayList<String> availableBrains =  ProcessScriptController.AvailableBrainsRMIAddressArrayList(uuid);
+            List<String> scriptsCompletedUUIDS = new ArrayList<>();
+            for (String address:
+            availableBrains) {
+                BrainInterface brainInterface = (BrainInterface) Naming.lookup(address);
+                List<String> lstRequestInBrain = brainInterface.getCompletedReq(Px);
+                scriptQueue.get(Px).getAll().removeIf( script -> lstRequestInBrain.contains(script.uuid));
+
+            } ;
             this.ExecuteUnfinishedReq(Px);
         } catch (NotBoundException e) {
             e.printStackTrace();
