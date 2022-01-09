@@ -70,7 +70,7 @@ public class Group implements Runnable {
             }
         }
 
-        public void leave(String address) {
+        public synchronized void leave(String address) {
             try {
                 joinInfo.removeIf(x -> x.host.equals(address));
                 multicastSocket.leaveGroup(multicastGroup);

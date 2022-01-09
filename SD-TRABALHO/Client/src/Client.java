@@ -78,6 +78,7 @@ public class Client {
 
             } catch (RemoteException ex)
             {
+                System.out.println(ex.getMessage());
                 BalancerInterface remote =  (BalancerInterface)Naming.lookup("rmi://localhost:2024/balancer");
                 ProcessorInfo processorInfo = remote.get();
                 processorInterface = (ProcessorInterface) Naming.lookup(processorInfo.serverAddress);
