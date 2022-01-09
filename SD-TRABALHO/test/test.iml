@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ReplicaManager" />
+    <orderEntry type="module" module-name="Balancer" />
     <orderEntry type="module" module-name="Processor" />
     <orderEntry type="module" module-name="Brain" />
     <orderEntry type="module" module-name="Client" />

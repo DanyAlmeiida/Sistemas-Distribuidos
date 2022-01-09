@@ -1,5 +1,11 @@
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import interfaces.BalancerInterface;
+import interfaces.BrainInterface;
+import models.ProcessorInfo;
+import models.SFTPClient;
+import models.Script;
+import interfaces.ProcessorInterface;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
@@ -9,6 +15,8 @@ import java.nio.file.Path;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.UUID;
@@ -34,7 +42,7 @@ public class Client {
                 new NotImplementedException();
                 break;
             case 3:
-                GetResult();
+                GetResult("");
                 break;
             case 0:
                 exit(0);
@@ -44,7 +52,7 @@ public class Client {
         }
 
     }
-    private void ExecuteScript() throws JSchException, SftpException {
+    private synchronized void ExecuteScript() throws JSchException, SftpException {
         String s = null;
         Script script = new Script();
         if(martelada.isEmpty()) {
@@ -62,11 +70,12 @@ public class Client {
         script.file = p.getFileName().toString();
 
         ProcessorInterface processorInterface = null;
-        ReplicaInterface processorReplicaManagerInterface = null;
+        BalancerInterface processorReplicaManagerInterface = null;
         try{
             try {
-                processorReplicaManagerInterface = (ReplicaInterface) Naming.lookup("rmi://localhost:2024/processor_manager");
-                ProcessorInfo processorInfo = processorReplicaManagerInterface.get();
+
+                BalancerInterface remote =  (BalancerInterface)Naming.lookup("rmi://localhost:2024/balancer");
+                ProcessorInfo processorInfo = remote.get();
                 processorInterface = (ProcessorInterface) Naming.lookup(processorInfo.serverAddress);
 
             } catch (NotBoundException | RemoteException | MalformedURLException ex)
@@ -75,23 +84,17 @@ public class Client {
 
             String id = processorInterface.run(script);
             System.out.println(id);
-            wait(1000);
-
+            wait(5000);
+            GetResult(id);
 
         }
         catch(Exception e)
         {System.out.println(e.getMessage()); }
     }
-    private void GetResult() throws MalformedURLException, NotBoundException, RemoteException {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("\nScript UUID:");
-        String uuid = scanner.nextLine();
-
+    private void GetResult(String uuid) throws MalformedURLException, NotBoundException, RemoteException {
         BrainInterface brainInterface = (BrainInterface) Naming.lookup("rmi://localhost:2030/resultmodels");
         Script script = brainInterface.get_result(uuid);
         System.out.println(script.PrintInfo());
-
     }
     private Path create_temp_file(String script){
         String tmpdir = System.getProperty("java.io.tmpdir");
@@ -165,7 +168,6 @@ public class Client {
      */
     public static void main(String[] args) throws JSchException, SftpException, MalformedURLException, NotBoundException, RemoteException {
         martelada = args[0];
-
         Client client = new Client();
     }
 
