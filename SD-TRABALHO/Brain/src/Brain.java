@@ -20,7 +20,7 @@ public class Brain {
         try{
             String address = "rmi://localhost:" + port + "/resultmodels";
 
-            brainManager = new BrainManager();
+            brainManager = new BrainManager(address,uuid,"BRAIN");
             r.rebind("resultmodels", brainManager );
             System.out.println("brain server ready");
 
